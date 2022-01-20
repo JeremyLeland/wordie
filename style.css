@@ -1,0 +1,74 @@
+body {
+  margin: 0;
+  overscroll-behavior: none; /* Disable Chrome two fingers back/forward swipe */
+  user-select: none;  /* Prevent accidental selection while dragging mouse */
+
+  display: flex;
+  flex-flow: column;
+
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+  vertical-align: middle;
+  margin: 4px;
+}
+
+.board {
+  display: table;
+  border-spacing: 4px;
+  font-size: 32px;
+  margin: auto;
+}
+
+.guess {
+  display: table-row;
+}
+
+.message {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.letter {
+  display: table-cell;
+  border: 2px solid black;
+  min-width: 48px;
+  height: 48px;
+  font-weight: bold;
+  
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+
+.alphabet {
+  display: table;
+  border-spacing: 2px;
+  margin: auto;
+}
+
+.alpha-row {
+  display: table-row;
+}
+
+.bottom {
+  display: table;
+  margin: auto;
+  font-size: 20px;
+}
+
+.wrong {
+  background-color: dimgray;
+  color: white;
+}
+.partial {
+  background-color: goldenrod;
+  color: white;
+}
+.correct {
+  background-color: green;
+  color: white;
+}
