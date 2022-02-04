@@ -3,7 +3,7 @@ const NUM_LETTERS = 5;
 
 const words = ( await ( await fetch( 'sgb-words.txt' ) ).text() ).split( '\n' );
 
-const DIFFICULTY_RANGE_SIZE = words.length / 3;
+const DIFFICULTY_RANGE_SIZE = 1000; //words.length / 3;
 
 const DEFAULT_MESSAGE = 'Choose your letters then click Guess.';
 const messageDiv = document.getElementById( 'message' );
@@ -35,7 +35,7 @@ export class Board {
 
       for ( let l = 0; l < NUM_LETTERS; l ++ ) {
         const letter = document.createElement( 'div' );
-        letter.className = 'letter';
+        letter.className = 'letter button';
         guess.appendChild( letter );
       }
 
@@ -57,7 +57,7 @@ export class Board {
         const letter = String.fromCharCode( 'a'.charCodeAt( 0 ) + index );
 
         const letterDiv = document.createElement( 'div' );
-        letterDiv.className = 'letter';
+        letterDiv.className = 'letter button';
         letterDiv.textContent = letter;
         letterDiv.onclick = () => this.addLetter( letter );
 
