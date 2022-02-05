@@ -38,7 +38,7 @@ for ( let index = 0, row = 0; row < 3; row ++ ) {
     const letterDiv = document.createElement( 'div' );
     letterDiv.className = 'letter button';
     letterDiv.textContent = letter;
-    letterDiv.onclick = () => this.addLetter( letter );
+    
 
     alphabet[ letter ] = letterDiv;
 
@@ -79,6 +79,8 @@ export class Board {
       alphabet[ letter ].classList.remove( Guess.Correct );
       alphabet[ letter ].classList.remove( Guess.Partial );
       alphabet[ letter ].classList.remove( Guess.Wrong );
+
+      alphabet[ letter ].onclick = () => this.addLetter( letter );
     }
     
     messageDiv.textContent = DEFAULT_MESSAGE;
