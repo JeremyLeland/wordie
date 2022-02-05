@@ -10,10 +10,48 @@ const messageDiv = document.getElementById( 'message' );
 
 const Guess = { Wrong: 'wrong', Partial: 'partial', Correct: 'correct' };
 
+const boardDiv = document.getElementById( 'board' );
+
+for ( let g = 0; g < MAX_GUESSES; g ++ ) {
+  const guess = document.createElement( 'div' );
+  guess.className = 'guess';
+
+  for ( let l = 0; l < NUM_LETTERS; l ++ ) {
+    const letter = document.createElement( 'div' );
+    letter.className = 'letter button';
+    guess.appendChild( letter );
+  }
+
+  boardDiv.appendChild( guess );
+}
+
+const alphabet = {};
+const alphabetDiv = document.getElementById( 'alphabet' );
+
+for ( let index = 0, row = 0; row < 3; row ++ ) {
+  const alphaRowDiv = document.createElement( 'div' );
+  alphaRowDiv.className = 'alpha-row';
+
+  for ( let col = 0; col < 9 && index < 26; col ++, index ++ ) {
+    const letter = String.fromCharCode( 'a'.charCodeAt( 0 ) + index );
+
+    const letterDiv = document.createElement( 'div' );
+    letterDiv.className = 'letter button';
+    letterDiv.textContent = letter;
+    letterDiv.onclick = () => this.addLetter( letter );
+
+    alphabet[ letter ] = letterDiv;
+
+    alphaRowDiv.appendChild( letterDiv );
+  }
+  
+  alphabetDiv.appendChild( alphaRowDiv );
+}
+
+
 export class Board {
   answer;
   alphabet;
-  div;
 
   #guessIndex = 0;
   #letterIndex = 0;
@@ -23,58 +61,32 @@ export class Board {
     return new Board( words[ wordIndex ] );
   }
 
+  // TODO: New board should use existing UI, which we only make once staticly outside of class
   constructor( answer ) {
     this.answer = answer;
 
-    this.div = document.createElement( 'div' );
-    this.div.className = 'board';
-
-    for ( let g = 0; g < MAX_GUESSES; g ++ ) {
-      const guess = document.createElement( 'div' );
-      guess.className = 'guess';
-
-      for ( let l = 0; l < NUM_LETTERS; l ++ ) {
-        const letter = document.createElement( 'div' );
-        letter.className = 'letter button';
-        guess.appendChild( letter );
+    for ( let guess = 0; guess < MAX_GUESSES; guess ++ ) {
+      for ( let letter = 0; letter < NUM_LETTERS; letter ++ ) {
+        const letterDiv = boardDiv.children[ guess ].children[ letter ];
+        letterDiv.textContent = '';
+        letterDiv.classList.remove( Guess.Correct );
+        letterDiv.classList.remove( Guess.Partial );
+        letterDiv.classList.remove( Guess.Wrong );
       }
-
-      this.div.appendChild( guess );
     }
 
-    document.getElementById( 'board' ).appendChild( this.div );
-
-    this.alphabet = {};
-    const alphabetDiv = document.getElementById( 'alphabet' );
-    alphabetDiv.className = 'alphabet';
-
-    let index = 0;
-    for ( let row = 0; row < 3; row ++ ) {
-      const alphaRowDiv = document.createElement( 'div' );
-      alphaRowDiv.className = 'alpha-row';
-
-      for ( let col = 0; col < 9 && index < 26; col ++, index ++ ) {
-        const letter = String.fromCharCode( 'a'.charCodeAt( 0 ) + index );
-
-        const letterDiv = document.createElement( 'div' );
-        letterDiv.className = 'letter button';
-        letterDiv.textContent = letter;
-        letterDiv.onclick = () => this.addLetter( letter );
-
-        this.alphabet[ letter ] = letterDiv;
-
-        alphaRowDiv.appendChild( letterDiv );
-      }
-      
-      alphabetDiv.appendChild( alphaRowDiv );
+    for ( const letter in alphabet ) {
+      alphabet[ letter ].classList.remove( Guess.Correct );
+      alphabet[ letter ].classList.remove( Guess.Partial );
+      alphabet[ letter ].classList.remove( Guess.Wrong );
     }
-
+    
     messageDiv.textContent = DEFAULT_MESSAGE;
   }
 
   addLetter( letter ) {
     if ( this.#letterIndex < NUM_LETTERS ) {
-      const letterDiv = this.div.children[ this.#guessIndex ].children[ this.#letterIndex ];
+      const letterDiv = boardDiv.children[ this.#guessIndex ].children[ this.#letterIndex ];
       letterDiv.textContent = letter;
       this.#letterIndex ++;
 
@@ -88,7 +100,7 @@ export class Board {
   clearLetter() {
     if ( 0 < this.#letterIndex ) {
       this.#letterIndex --;
-      const letterDiv = this.div.children[ this.#guessIndex ].children[ this.#letterIndex ];
+      const letterDiv = boardDiv.children[ this.#guessIndex ].children[ this.#letterIndex ];
       letterDiv.textContent = '';
 
       messageDiv.textContent = DEFAULT_MESSAGE;
@@ -104,7 +116,7 @@ export class Board {
       return;
     }
 
-    const guess = this.div.children[ this.#guessIndex ];
+    const guess = boardDiv.children[ this.#guessIndex ];
     const word = [ ...guess?.children ].map( child => child.textContent ).join('');
 
     if ( !words.includes( word ) ) {
@@ -121,8 +133,8 @@ export class Board {
       if ( letter == this.answer[ i ] ) {
         letterDiv.classList.add( Guess.Correct );
 
-        this.alphabet[ letter ].classList.remove( Guess.Partial );
-        this.alphabet[ letter ].classList.add( Guess.Correct );
+        alphabet[ letter ].classList.remove( Guess.Partial );
+        alphabet[ letter ].classList.add( Guess.Correct );
 
         numCorrect ++;
         numTotal ++;
@@ -130,14 +142,14 @@ export class Board {
       else if ( this.answer.includes( letter ) ) {
         letterDiv.classList.add( Guess.Partial );
 
-        this.alphabet[ letter ].classList.remove( Guess.Correct );
-        this.alphabet[ letter ].classList.add( Guess.Partial );
+        alphabet[ letter ].classList.remove( Guess.Correct );
+        alphabet[ letter ].classList.add( Guess.Partial );
 
         numTotal ++;
       }
       else {
         letterDiv.classList.add( Guess.Wrong );
-        this.alphabet[ letter ].classList.add( Guess.Wrong );
+        alphabet[ letter ].classList.add( Guess.Wrong );
       }
     }
 

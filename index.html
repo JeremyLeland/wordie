@@ -6,12 +6,12 @@
 <body>
   <div class="wrapper">
     <div class="bottom">
-      <div class="button">New</div>
+      <div id="new" class="button">&nbsp;New&nbsp;</div>
       <div class="title">Wordie</div>
-      <div class="button">Easy</div>
+      <div id="difficulty" class="button">&nbsp;Easy&nbsp;</div>
     </div>
     <div id="board"></div>
-    <div id="alphabet" class="alphabet"></div>
+    <div id="alphabet"></div>
     <div class="bottom">
       <div id="clear" class="button">&nbsp;Clear&nbsp;</div>
       <div id="message" class="message"></div>
@@ -24,8 +24,9 @@
 
   import { Board } from './Board.js';
 
-  const board = Board.fromDifficulty( 0 );
+  let board = Board.fromDifficulty( 0 );
 
+  document.getElementById( 'new' ).onclick = newBoard;
   document.getElementById( 'clear' ).onclick = () => board.clearLetter();
   document.getElementById( 'apply' ).onclick = () => board.applyGuess();
   
@@ -39,6 +40,10 @@
     else if ( e.key == 'Enter' ) {
       board.applyGuess();
     }
+  }
+
+  function newBoard() {
+    board = Board.fromDifficulty( 0 );
   }
 
 </script>

@@ -27,7 +27,7 @@ h1 {
   margin: 4px;
 }
 
-.board {
+#board {
   display: table;
   border-spacing: 4px;
   font-size: 32px;
@@ -63,7 +63,7 @@ h1 {
   width: 48px;
 }
 
-.alphabet {
+#alphabet {
   display: table;
   border-spacing: 2px;
   margin: auto;
