@@ -3,7 +3,7 @@ const NUM_LETTERS = 5;
 
 const words = ( await ( await fetch( 'sgb-words.txt' ) ).text() ).split( '\n' );
 
-const DIFFICULTY_RANGE_SIZE = 1000; //words.length / 3;
+const DIFFICULTY_RANGE_SIZE = 2000; //words.length / 3;
 
 const DEFAULT_MESSAGE = 'Choose your letters then click Guess.';
 const messageDiv = document.getElementById( 'message' );
@@ -63,6 +63,7 @@ export class Board {
 
   // TODO: New board should use existing UI, which we only make once staticly outside of class
   constructor( answer ) {
+    console.log( answer );
     this.answer = answer;
 
     for ( let guess = 0; guess < MAX_GUESSES; guess ++ ) {

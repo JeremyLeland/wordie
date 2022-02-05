@@ -1,4 +1,4 @@
-<title>Wordie v0.52</title>
+<title>Wordie v0.6</title>
 <meta name="viewport" content="width=device-width, user-scalable=no">
 <meta charset="utf-8">
 <link rel="stylesheet" href="./style.css">
@@ -6,30 +6,39 @@
 <body>
   <div class="wrapper">
     <div class="bottom">
-      <div id="new" class="button">&nbsp;New&nbsp;</div>
+      <div id="new" class="button">New</div>
       <div class="title">Wordie</div>
-      <div id="difficulty" class="button">&nbsp;Easy&nbsp;</div>
+      <div id="difficulty" class="button">Easy</div>
     </div>
     <div id="board"></div>
     <div id="alphabet"></div>
     <div class="bottom">
-      <div id="clear" class="button">&nbsp;Clear&nbsp;</div>
+      <div id="clear" class="button">Clear</div>
       <div id="message" class="message"></div>
-      <div id="apply" class="button">&nbsp;Guess&nbsp;</div>
+      <div id="apply" class="button">Guess</div>
     </div>
   </div>
 </body>
 
 <script type="module">
 
+  const Difficulty = [ 'Easy', 'Hard' ];
+
   import { Board } from './Board.js';
 
-  let board = Board.fromDifficulty( 0 );
+  let difficulty = 0;
+  const difficultyButton = document.getElementById( 'difficulty' );
+  
+  let board;
 
   document.getElementById( 'new' ).onclick = newBoard;
+  difficultyButton.onclick = () => {
+    difficulty = ( difficulty + 1 ) % Difficulty.length;
+    difficultyButton.textContent = Difficulty[ difficulty ];
+  }
   document.getElementById( 'clear' ).onclick = () => board.clearLetter();
   document.getElementById( 'apply' ).onclick = () => board.applyGuess();
-  
+
   document.onkeydown = ( e ) => {
     if ( e.key.length == 1 && /[a-z]/i.test( e.key ) ) {
       board.addLetter( e.key );
@@ -42,8 +51,10 @@
     }
   }
 
+  newBoard();
+
   function newBoard() {
-    board = Board.fromDifficulty( 0 );
+    board = Board.fromDifficulty( difficulty );
   }
 
 </script>
