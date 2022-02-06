@@ -12,6 +12,9 @@ body {
 .wrapper {
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-flow: column;
+  height: 100%;
 }
 
 .title {
@@ -56,12 +59,12 @@ h1 {
   text-transform: uppercase;
 
   width: 72px;
-  height: 48px;
+  height: 45px;
 }
 
 .letter {
   display: table-cell;
-  width: 48px;
+  width: 45px;
 }
 
 #alphabet {
