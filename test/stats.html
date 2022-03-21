@@ -1,0 +1,47 @@
+<body>
+  <div>Games: <span id="games"></span></div>
+  <div>Wins: <span id="wins"></span></div>
+  <div>Loses: <span id="loses"></span></div>
+  <div>Incomplete: <span id="incomplete"></span></div>
+  <div>Since: <span id="earliest"></span></div>
+</body>
+
+<script>
+  const STORAGE_ID = 'wordie';
+  const Difficulty = [ 'Easy', 'Hard' ];
+  const Outcome = { Incomplete: 0, Win: 1, Lose: 2 };
+
+  const storage = JSON.parse( window.localStorage.getItem( STORAGE_ID ) ) ?? {
+    games: [],
+  };
+
+  let game;
+
+  newGame();
+
+  function newGame() {
+    game = {
+      timestamp: new Date(),
+      difficulty: 0,
+      guesses: 0,
+      outcome: Outcome.Incomplete,
+    };
+
+    storage.games.push( game );
+  }
+
+  const stats = {
+    games: storage.games.length,
+    wins:  storage.games.filter( e => 1 == e.outcome ).length,
+    loses: storage.games.filter( e => 2 == e.outcome ).length,
+    incomplete: storage.games.filter( e => 0 == e.outcome ).length,
+    earliest: new Date( storage.games.map( e => e.timestamp ).sort()[0] ).toDateString(),
+  }
+
+  for ( const label in stats ) {
+    document.getElementById( label ).textContent = stats[ label ];
+  }
+  
+  window.localStorage.setItem( STORAGE_ID, JSON.stringify( storage ) );
+
+</script>
