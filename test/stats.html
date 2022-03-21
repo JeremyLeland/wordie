@@ -1,9 +1,24 @@
+<style>
+  #piechart {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+</style>
 <body>
   <div>Games: <span id="games"></span></div>
   <div>Wins: <span id="wins"></span></div>
   <div>Loses: <span id="loses"></span></div>
   <div>Incomplete: <span id="incomplete"></span></div>
   <div>Since: <span id="earliest"></span></div>
+  <div id="piechart"></div>
+  <button onclick="win(1)">WIN 1</button>
+  <button onclick="win(2)">WIN 2</button>
+  <button onclick="win(3)">WIN 3</button>
+  <button onclick="win(4)">WIN 4</button>
+  <button onclick="win(5)">WIN 5</button>
+  <button onclick="win(6)">WIN 6</button>
+  <button onclick="lose()">LOSE</button>
 </body>
 
 <script>
@@ -21,27 +36,74 @@
 
   function newGame() {
     game = {
-      timestamp: new Date(),
-      difficulty: 0,
-      guesses: 0,
-      outcome: Outcome.Incomplete,
+      t: new Date().getTime(),  // timestamp
+      d: 0,                     // difficulty
+      g: 0,                     // guesses
+      o: Outcome.Incomplete,    // outcome
     };
 
     storage.games.push( game );
   }
 
-  const stats = {
-    games: storage.games.length,
-    wins:  storage.games.filter( e => 1 == e.outcome ).length,
-    loses: storage.games.filter( e => 2 == e.outcome ).length,
-    incomplete: storage.games.filter( e => 0 == e.outcome ).length,
-    earliest: new Date( storage.games.map( e => e.timestamp ).sort()[0] ).toDateString(),
+  function win( guesses ) {
+    game.g = guesses;
+    game.o = Outcome.Win;
+    updateStats();
+    newGame();
   }
 
-  for ( const label in stats ) {
-    document.getElementById( label ).textContent = stats[ label ];
+  function lose() {
+    game.g = 6;
+    game.o = Outcome.Lose;
+    updateStats();
+    newGame();
   }
-  
-  window.localStorage.setItem( STORAGE_ID, JSON.stringify( storage ) );
+
+  updateStats();
+
+  function updateStats() {
+
+    const guessHistogram = {};
+    storage.games.filter( e => 1 == e.o ).map( e => e.g ).forEach( guess => {
+      guessHistogram[ guess ] ??= 0;
+      guessHistogram[ guess ] ++;
+    } );
+
+    const percents = [];
+    let val = 0;
+
+    for ( const numberOfGuesses in guessHistogram ) {
+      val += 100 * guessHistogram[ numberOfGuesses ] / storage.games.length;
+      percents.push( val );
+    }
+
+    console.log( percents );
+
+    const colors = [ 'red', 'orange', 'yellow', 'green', 'blue', 'purple' ];
+
+    let conicParts = [];
+
+    for ( let i = 0; i < 6; i ++ ) {
+      conicParts.push( `${ colors[ i ] } ${ 0 < i ? percents[ i - 1 ] : 0 }% ${ percents[ i ] }% ` );
+    }
+
+    console.log( conicParts );
+
+    document.getElementById( 'piechart' ).style.background = `conic-gradient( ${ conicParts.join( ',' ) } )`;
+
+    const stats = {
+      games: storage.games.length,
+      wins:  storage.games.filter( e => 1 == e.o ).length + JSON.stringify( guessHistogram ),
+      loses: storage.games.filter( e => 2 == e.o ).length,
+      incomplete: storage.games.filter( e => 0 == e.o ).length,
+      earliest: new Date( storage.games.map( e => e.t ).sort()[0] ).toDateString(),
+    }
+
+    for ( const label in stats ) {
+      document.getElementById( label ).textContent = stats[ label ];
+    }
+    
+    window.localStorage.setItem( STORAGE_ID, JSON.stringify( storage ) );
+  }
 
 </script>
