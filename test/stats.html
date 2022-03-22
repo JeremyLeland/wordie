@@ -1,4 +1,8 @@
 <style>
+  table, th, td {
+    border: 1px solid;
+  }
+
   #piechart {
     width: 100px;
     height: 100px;
@@ -8,17 +12,19 @@
 <body>
   <div>Games: <span id="games"></span></div>
   <div>Wins: <span id="wins"></span></div>
+  <table id="guessHistogram"></table>
   <div>Loses: <span id="loses"></span></div>
   <div>Incomplete: <span id="incomplete"></span></div>
   <div>Since: <span id="earliest"></span></div>
-  <div id="piechart"></div>
-  <button onclick="win(1)">WIN 1</button>
-  <button onclick="win(2)">WIN 2</button>
-  <button onclick="win(3)">WIN 3</button>
-  <button onclick="win(4)">WIN 4</button>
-  <button onclick="win(5)">WIN 5</button>
-  <button onclick="win(6)">WIN 6</button>
-  <button onclick="lose()">LOSE</button>
+  <!-- <div id="piechart"></div> -->
+  <button onclick="win(1)">Win 1</button>
+  <button onclick="win(2)">Win 2</button>
+  <button onclick="win(3)">Win 3</button>
+  <button onclick="win(4)">Win 4</button>
+  <button onclick="win(5)">Win 5</button>
+  <button onclick="win(6)">Win 6</button>
+  <button onclick="lose()">Lose</button>
+  <button onclick="reset()">Reset</button>
 </body>
 
 <script>
@@ -29,6 +35,10 @@
   const storage = JSON.parse( window.localStorage.getItem( STORAGE_ID ) ) ?? {
     games: [],
   };
+
+  // TODO: Forget the charts for now. Add "reset" functionality, then just display the guess histogram as text.
+  // Integrate this with actual game and push it live. 
+  // Charts can be explored later, but will be a big time suck if you're not careful.
 
   let game;
 
@@ -59,6 +69,11 @@
     newGame();
   }
 
+  function reset() {
+    storage.games = [];
+    updateStats();
+  }
+
   updateStats();
 
   function updateStats() {
@@ -69,27 +84,36 @@
       guessHistogram[ guess ] ++;
     } );
 
-    const percents = [];
-    let val = 0;
+    let headerStr = '', valStr = '';
 
     for ( const numberOfGuesses in guessHistogram ) {
-      val += 100 * guessHistogram[ numberOfGuesses ] / storage.games.length;
-      percents.push( val );
+      headerStr += `<th>${ numberOfGuesses }</th>`;
+      valStr += `<td>${ guessHistogram[ numberOfGuesses ] }</td>`;
     }
 
-    console.log( percents );
+    document.getElementById( 'guessHistogram' ).innerHTML = `<tr>${ headerStr }</tr><tr>${ valStr }</tr>`;
 
-    const colors = [ 'red', 'orange', 'yellow', 'green', 'blue', 'purple' ];
+    // const percents = [];
+    // let val = 0;
 
-    let conicParts = [];
+    // for ( const numberOfGuesses in guessHistogram ) {
+    //   val += 100 * guessHistogram[ numberOfGuesses ] / storage.games.length;
+    //   percents.push( val );
+    // }
 
-    for ( let i = 0; i < 6; i ++ ) {
-      conicParts.push( `${ colors[ i ] } ${ 0 < i ? percents[ i - 1 ] : 0 }% ${ percents[ i ] }% ` );
-    }
+    // console.log( percents );
 
-    console.log( conicParts );
+    // const colors = [ 'red', 'orange', 'yellow', 'green', 'blue', 'purple' ];
 
-    document.getElementById( 'piechart' ).style.background = `conic-gradient( ${ conicParts.join( ',' ) } )`;
+    // let conicParts = [];
+
+    // for ( let i = 0; i < 6; i ++ ) {
+    //   conicParts.push( `${ colors[ i ] } ${ 0 < i ? percents[ i - 1 ] : 0 }% ${ percents[ i ] }% ` );
+    // }
+
+    // console.log( conicParts );
+
+    // document.getElementById( 'piechart' ).style.background = `conic-gradient( ${ conicParts.join( ',' ) } )`;
 
     const stats = {
       games: storage.games.length,
