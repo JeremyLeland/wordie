@@ -184,7 +184,7 @@ export class Board {
     this.#letterIndex = 0;
     
     if ( word == this.answer ) {
-      messageDiv.textContent = `Correctly guessed with ${ this.#guessIndex } tries!`;
+      messageDiv.textContent = `Correctly guessed '${ this.answer.toUpperCase() }' with ${ this.#guessIndex } ${ this.#guessIndex == 1 ? 'try' : 'tries' }!`;
       win( this.#guessIndex );
     }
     else if ( this.#guessIndex == MAX_GUESSES ) {
@@ -213,7 +213,7 @@ function updateStats() {
   const guessHistogram = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
   storage.games.filter( e => 1 == e.o ).map( e => e.g ).forEach( guess => guessHistogram[ guess ] ++ );
 
-  let headerStr = '<th>Guesses</th>', valStr = '<th>Games</th>';
+  let headerStr = '<th class="left">Guesses</th>', valStr = '<th class="left">Games</th>';
 
   for ( const numberOfGuesses in guessHistogram ) {
     headerStr += `<th>${ numberOfGuesses }</th>`;
