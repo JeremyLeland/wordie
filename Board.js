@@ -1,8 +1,18 @@
 const MAX_GUESSES = 6;
 const NUM_LETTERS = 5;
 
-const words = ( await ( await fetch( 'sgb-words.txt' ) ).text() ).split( '\n' );
+const STORAGE_ID = 'wordie';
+const Outcome = { Incomplete: 0, Win: 1, Lose: 2 };
 
+const storage = JSON.parse( window.localStorage.getItem( STORAGE_ID ) ) ?? {
+  games: [],
+};
+
+let game;
+
+const statsDiv = document.getElementById( 'stats' );
+
+const words = ( await ( await fetch( 'sgb-words.txt' ) ).text() ).split( '\n' );
 const DIFFICULTY_RANGE_SIZE = 2000; //words.length / 3;
 
 const DEFAULT_MESSAGE = 'Choose your letters then click Guess.';
@@ -85,6 +95,18 @@ export class Board {
     }
     
     messageDiv.textContent = DEFAULT_MESSAGE;
+
+    game = {
+      t: new Date().getTime(),  // timestamp
+      d: 0,                     // difficulty
+      g: 0,                     // guesses
+      o: Outcome.Incomplete,    // outcome
+    };
+
+    storage.games.push( game );
+
+    updateStats();
+    statsDiv.style.visibility = 'hidden';
   }
 
   addLetter( letter ) {
@@ -163,9 +185,54 @@ export class Board {
     
     if ( word == this.answer ) {
       messageDiv.textContent = `Correctly guessed with ${ this.#guessIndex } tries!`;
+      win( this.#guessIndex );
     }
     else if ( this.#guessIndex == MAX_GUESSES ) {
       messageDiv.textContent = `Out of tries! Answer was: '${ this.answer.toUpperCase() }'.`;
+      lose();
     }
   }
+}
+
+function win( guesses ) {
+  game.g = guesses;
+  game.o = Outcome.Win;
+  updateStats();
+  statsDiv.style.visibility = 'visible';
+}
+
+function lose() {
+  game.g = MAX_GUESSES;
+  game.o = Outcome.Lose;
+  updateStats();
+  statsDiv.style.visibility = 'visible';
+}
+
+function updateStats() {
+
+  const guessHistogram = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+  storage.games.filter( e => 1 == e.o ).map( e => e.g ).forEach( guess => guessHistogram[ guess ] ++ );
+
+  let headerStr = '<th>Guesses</th>', valStr = '<th>Games</th>';
+
+  for ( const numberOfGuesses in guessHistogram ) {
+    headerStr += `<th>${ numberOfGuesses }</th>`;
+    valStr += `<td>${ guessHistogram[ numberOfGuesses ] }</td>`;
+  }
+
+  document.getElementById( 'guessHistogram' ).innerHTML = `<tr>${ headerStr }</tr><tr>${ valStr }</tr>`;
+
+  const stats = {
+    games: storage.games.length,
+    wins:  storage.games.filter( e => Outcome.Win == e.o ).length,
+    loses: storage.games.filter( e => Outcome.Lose == e.o ).length,
+    incomplete: storage.games.filter( e => Outcome.Incomplete == e.o ).length,
+    earliest: new Date( storage.games.map( e => e.t ).sort()[0] ).toDateString(),
+  }
+
+  for ( const label in stats ) {
+    document.getElementById( label ).textContent = stats[ label ];
+  }
+
+  window.localStorage.setItem( STORAGE_ID, JSON.stringify( storage ) );
 }
