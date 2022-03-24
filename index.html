@@ -9,6 +9,7 @@
     <div class="bottom">
       <div id="new" class="button">New</div>
       <div class="title">Wordie</div>
+      <div id="statsButton" class="button">Stats</div>
       <div id="difficulty" class="button">Easy</div>
     </div>
     <div id="board"></div>
@@ -38,6 +39,8 @@
 
   let difficulty = 0;
   const difficultyButton = document.getElementById( 'difficulty' );
+
+  const statsDiv = document.getElementById( 'stats' );
   
   let board;
 
@@ -45,7 +48,15 @@
   difficultyButton.onclick = () => {
     difficulty = ( difficulty + 1 ) % Difficulty.length;
     difficultyButton.textContent = Difficulty[ difficulty ];
-  }
+  };
+  document.getElementById( 'statsButton' ).onclick = () => {
+    if ( statsDiv.style.visibility == 'visible' ) {
+      statsDiv.style.visibility = 'hidden';
+    }
+    else {
+      statsDiv.style.visibility = 'visible';
+    }
+  };
   document.getElementById( 'clear' ).onclick = () => board.clearLetter();
   document.getElementById( 'apply' ).onclick = () => board.applyGuess();
 

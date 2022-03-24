@@ -10,8 +10,6 @@ const storage = JSON.parse( window.localStorage.getItem( STORAGE_ID ) ) ?? {
 
 let game;
 
-const statsDiv = document.getElementById( 'stats' );
-
 const words = ( await ( await fetch( 'sgb-words.txt' ) ).text() ).split( '\n' );
 const DIFFICULTY_RANGE_SIZE = 2000; //words.length / 3;
 
@@ -106,7 +104,6 @@ export class Board {
     storage.games.push( game );
 
     updateStats();
-    statsDiv.style.visibility = 'hidden';
   }
 
   addLetter( letter ) {
@@ -198,14 +195,12 @@ function win( guesses ) {
   game.g = guesses;
   game.o = Outcome.Win;
   updateStats();
-  statsDiv.style.visibility = 'visible';
 }
 
 function lose() {
   game.g = MAX_GUESSES;
   game.o = Outcome.Lose;
   updateStats();
-  statsDiv.style.visibility = 'visible';
 }
 
 function updateStats() {
